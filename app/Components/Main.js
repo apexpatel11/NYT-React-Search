@@ -1,89 +1,63 @@
-// Include React 
+// Include React and React-Router dependencies
 var React = require('react');
+var Router = require('react-router')
 
-// Here we include all of the sub-components
-var Form = require('./Children/Form');
-var Results = require('./Children/Results');
-
-// Helper Function
-var helpers = require('./utils/helpers.js');
-
-// This is the main component. 
+// Create the Main component
 var Main = React.createClass({
 
-	// Here we set a generic state associated with the number of clicks
-	getInitialState: function(){
-		return {
-			searchTerm: "",
-			results: ""
-		}
-	},	
-
-	// We use this function to allow children to update the parent with searchTerms.
-	setTerm: function(term){
-		this.setState({
-			searchTerm: term
-		})
-	},
-
-	// If the component updates we'll run this code
-	componentDidUpdate: function(prevProps, prevState){
-
-		if(prevState.searchTerm != this.state.searchTerm){
-			console.log("UPDATED");
-
-			helpers.runQuery(this.state.searchTerm)
-				.then(function(data){
-					if (data != this.state.results)
-					{
-						console.log("HERE");
-						console.log(data);
-
-						this.setState({
-							results: data
-						})		
-					}
-
-
-				// This code is necessary to bind the keyword "this" when we say this.setState 
-				// to actually mean the component itself and not the runQuery function.
-				}.bind(this))		
-		}
-	},
-
-	// Here we render the function
 	render: function(){
 
 		return(
+			/*We can only render a single div. So we need to group everything inside of this main-container one*/
+			<div className="main-container">
 
-			<div className="container">
 
-				<div className="row">
-
-					<div className="jumbotron">
-						<h2 className="text-center">Address Finder!</h2>
-						<p className="text-center"><em>Enter a landmark to search for its exact address (ex: "Eiffel Tower").</em></p>
-					</div>
-
-					<div className="col-md-6">
+				<div className="container">
+					{/*Navbar*/}
+					<nav className="navbar navbar-default" role="navigation">
+						<div className="container-fluid">
+							<div className="navbar-header">
+								<button type="button" className="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+									<span className="sr-only">Toggle navigation</span>
+									<span className="icon-bar"></span>
+									<span className="icon-bar"></span>
+									<span className="icon-bar"></span>
+								</button>
+								<a className="navbar-brand" href="#">NYT-React</a>
+							</div>
 					
-						<Form setTerm={this.setTerm}/>
+							<div className="collapse navbar-collapse navbar-ex1-collapse">
+								<ul className="nav navbar-nav navbar-right">
+									<li><a href="#/search">Search</a></li>
+									<li><a href="#/saved">Saved Articles</a></li>
+								</ul>
+							</div>
+						</div>
+					</nav>
 
+					{/*Jumbotron*/}
+					<div className="jumbotron">
+						<h2 className="text-center"><strong>(ReactJS) New York Times Article Scrubber</strong></h2>
+						<h3 className="text-center">Search for and save articles of interest.</h3>
 					</div>
 
-					<div className="col-md-6">
-				
-						<Results address={this.state.results} />
 
-					</div>
+					{/*Here we will load the sub components (Search or Saved */}
+					{/*These sub-components are getting passed as this.props.children*/}
+					{this.props.children}
 
-
+					<footer>
+						<hr />
+						<p className="pull-right"><i className="fa fa-github" aria-hidden="true"></i> Proudly built using React.js</p>
+					</footer>
 				</div>
+
+
 
 			</div>
 		)
 	}
 });
 
-// Export the componen back for use in other files
+// Export the module back to the route
 module.exports = Main;
